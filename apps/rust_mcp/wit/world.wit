@@ -1,0 +1,8 @@
+package component:rust-mcp;
+
+/// An example world for the component to target.
+world rust-mcp {
+    export register-routes: func();
+    export load-from-ledger: func(cmd: string);
+    export insert-in-ledger: func(cmd: string);
+}
