@@ -99,7 +99,6 @@ impl Guest for Component {
                 return;
             }
         };
-        // comments
 
         klave::notifier::send_string(&response.status().to_string());
 
