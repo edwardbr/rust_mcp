@@ -20,6 +20,7 @@ impl Guest for Component {
         klave::router::add_user_transaction("insert-in-ledger");
 
         klave::router::add_user_query("cricket-scores");
+        klave::router::add_user_query("post-data");
     }
 
     fn load_from_ledger(cmd: String) {
@@ -63,6 +64,38 @@ impl Guest for Component {
         "value": value
         });
         klave::notifier::send_string(&result_as_json.to_string());
+    }
+
+    fn post_data(json: String) {
+        let Ok(v) = serde_json::from_str::<Value>(&json) else {
+            klave::notifier::send_string(&format!("failed to parse '{json}' as json"));
+            return;
+        };
+
+        let url = v["url"].as_str().unwrap();
+        let body: &str = v["body"].as_str().unwrap();
+        let method: &str = v["method"].as_str().unwrap();
+
+        let https_request = Request::builder()
+            .method(method)
+            .uri(url)
+            .header("Content-Type", "application/json")
+            .body(body.to_string())
+            .unwrap();
+
+        let response: http::Response<String> = match klave::https::request(&https_request) {
+            Ok(r) => r,
+            Err(e) => {
+                klave::notifier::send_string(&format!(
+                    "https_query {} failure: {}",
+                    https_request.body(),
+                    e
+                ));
+                return;
+            }
+        };
+
+        klave::notifier::send_string(&format!("body {}", response.body()));
     }
 
     fn cricket_scores(cmd: String) {

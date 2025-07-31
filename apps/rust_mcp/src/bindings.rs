@@ -31,11 +31,20 @@ pub unsafe fn _export_cricket_scores_cabi<T: Guest>(arg0: *mut u8, arg1: usize) 
     let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
     T::cricket_scores(_rt::string_lift(bytes0));
 }
+#[doc(hidden)]
+#[allow(non_snake_case)]
+pub unsafe fn _export_post_data_cabi<T: Guest>(arg0: *mut u8, arg1: usize) {
+    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+    let len0 = arg1;
+    let bytes0 = _rt::Vec::from_raw_parts(arg0.cast(), len0, len0);
+    T::post_data(_rt::string_lift(bytes0));
+}
 pub trait Guest {
     fn register_routes() -> ();
     fn load_from_ledger(cmd: _rt::String) -> ();
     fn insert_in_ledger(cmd: _rt::String) -> ();
     fn cricket_scores(cmd: _rt::String) -> ();
+    fn post_data(cmd: _rt::String) -> ();
 }
 #[doc(hidden)]
 macro_rules! __export_world_rust_mcp_cabi {
@@ -51,7 +60,9 @@ macro_rules! __export_world_rust_mcp_cabi {
         _export_insert_in_ledger_cabi::<$ty > (arg0, arg1) } } #[unsafe (export_name =
         "cricket-scores")] unsafe extern "C" fn export_cricket_scores(arg0 : * mut u8,
         arg1 : usize,) { unsafe { $($path_to_types)*:: _export_cricket_scores_cabi::<$ty
-        > (arg0, arg1) } } };
+        > (arg0, arg1) } } #[unsafe (export_name = "post-data")] unsafe extern "C" fn
+        export_post_data(arg0 : * mut u8, arg1 : usize,) { unsafe { $($path_to_types)*::
+        _export_post_data_cabi::<$ty > (arg0, arg1) } } };
     };
 }
 #[doc(hidden)]
@@ -109,13 +120,13 @@ pub(crate) use __export_rust_mcp_impl as export;
 )]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 261] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x86\x01\x01A\x02\x01\
-A\x06\x01@\0\x01\0\x04\0\x0fregister-routes\x01\0\x01@\x01\x03cmds\x01\0\x04\0\x10\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 275] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x94\x01\x01A\x02\x01\
+A\x07\x01@\0\x01\0\x04\0\x0fregister-routes\x01\0\x01@\x01\x03cmds\x01\0\x04\0\x10\
 load-from-ledger\x01\x01\x04\0\x10insert-in-ledger\x01\x01\x04\0\x0ecricket-scor\
-es\x01\x01\x04\0\x1bcomponent:rust-mcp/rust-mcp\x04\0\x0b\x0e\x01\0\x08rust-mcp\x03\
-\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.1\x10wit-\
-bindgen-rust\x060.41.0";
+es\x01\x01\x04\0\x09post-data\x01\x01\x04\0\x1bcomponent:rust-mcp/rust-mcp\x04\0\
+\x0b\x0e\x01\0\x08rust-mcp\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwi\
+t-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

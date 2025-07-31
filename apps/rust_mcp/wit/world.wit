@@ -6,4 +6,5 @@ world rust-mcp {
     export load-from-ledger: func(cmd: string);
     export insert-in-ledger: func(cmd: string);
     export cricket-scores: func(cmd: string);
+    export post-data: func(cmd: string);   
 }
