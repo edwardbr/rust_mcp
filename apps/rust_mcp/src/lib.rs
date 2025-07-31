@@ -74,12 +74,15 @@ impl Guest for Component {
             return;
         };
 
-        let url = v["url"].as_str().unwrap();
-        let method: &str = v["method"].as_str().unwrap();
-        let body: &str = v["body"].as_str().unwrap();
+        klave::notifier::send_string(&v.as_str().unwrap());
 
+        let url = v["url"].as_str().unwrap();
         klave::notifier::send_string(&url);
+
+        let method: &str = v["method"].as_str().unwrap();
         klave::notifier::send_string(&method);
+
+        let body: &str = v["body"].as_str().unwrap();
         klave::notifier::send_string(&body);
 
         let https_request = Request::builder()
