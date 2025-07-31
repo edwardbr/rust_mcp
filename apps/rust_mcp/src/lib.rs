@@ -71,27 +71,39 @@ impl Guest for Component {
 
         let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
             klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
-            klave::router::cancel_transaction();
             return;
         };
 
-        klave::notifier::send_string(&v.as_str().unwrap());
+        let Some(url) = v["url"].as_str() else {
+            klave::notifier::send_string("failed to url' from json");
+            return;
+        };
 
-        let url = v["url"].as_str().unwrap();
-        klave::notifier::send_string(&url);
+        klave::notifier::send_string(url);
 
-        let method: &str = v["method"].as_str().unwrap();
-        klave::notifier::send_string(&method);
+        let Some(method) = v["method"].as_str() else {
+            klave::notifier::send_string("failed to method' from json");
+            return;
+        };
 
-        let body: &str = v["body"].as_str().unwrap();
-        klave::notifier::send_string(&body);
+        klave::notifier::send_string(method);
 
-        let https_request = Request::builder()
+        let Some(body) = v["body"].as_str() else {
+            klave::notifier::send_string("failed to body' from json");
+            return;
+        };
+
+        klave::notifier::send_string(body);
+
+        let Ok(https_request) = Request::builder()
             .method(method)
             .uri(url)
             .header("Content-Type", "application/json")
             .body(body.to_string())
-            .unwrap();
+        else {
+            klave::notifier::send_string("failed to send json");
+            return;
+        };
         //testing 1,2,3
 
         let response: http::Response<String> = match klave::https::request(&https_request) {
