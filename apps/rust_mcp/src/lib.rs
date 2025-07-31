@@ -91,6 +91,7 @@ impl Guest for Component {
             .header("Content-Type", "application/json")
             .body(body.to_string())
             .unwrap();
+        //testing 1,2,3
 
         let response: http::Response<String> = match klave::https::request(&https_request) {
             Ok(r) => r,
