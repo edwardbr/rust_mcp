@@ -66,11 +66,12 @@ impl Guest for Component {
         klave::notifier::send_string(&result_as_json.to_string());
     }
 
-    fn post_data(json: String) {
-        klave::notifier::send_string(&json);
+    fn post_data(cmd: String) {
+        klave::notifier::send_string(&cmd);
 
-        let Ok(v) = serde_json::from_str::<Value>(&json) else {
-            klave::notifier::send_string(&format!("failed to parse '{json}' as json"));
+        let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
+            klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+            klave::router::cancel_transaction();
             return;
         };
 
