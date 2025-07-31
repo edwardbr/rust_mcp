@@ -67,14 +67,20 @@ impl Guest for Component {
     }
 
     fn post_data(json: String) {
+        klave::notifier::send_string(&json);
+
         let Ok(v) = serde_json::from_str::<Value>(&json) else {
             klave::notifier::send_string(&format!("failed to parse '{json}' as json"));
             return;
         };
 
         let url = v["url"].as_str().unwrap();
-        let body: &str = v["body"].as_str().unwrap();
         let method: &str = v["method"].as_str().unwrap();
+        let body: &str = v["body"].as_str().unwrap();
+
+        klave::notifier::send_string(&url);
+        klave::notifier::send_string(&method);
+        klave::notifier::send_string(&body);
 
         let https_request = Request::builder()
             .method(method)
