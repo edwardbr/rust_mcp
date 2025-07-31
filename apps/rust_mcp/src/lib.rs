@@ -66,12 +66,15 @@ impl Guest for Component {
     }
 
     fn cricket_scores(cmd: String) {
+        klave::notifier::send_string(&cmd);
         let https_request = Request::builder()
             .method("POST")
             .uri(cmd)
             .header("Content-Type", "application/json")
             .body(String::from(""))
             .unwrap();
+
+        klave::notifier::send_string("message sent");
 
         let response = match klave::https::request(&https_request) {
             Ok(r) => r,
