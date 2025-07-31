@@ -67,9 +67,16 @@ impl Guest for Component {
 
     fn cricket_scores(cmd: String) {
         klave::notifier::send_string(&cmd);
+        let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
+            klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
+            klave::router::cancel_transaction();
+            return;
+        };
+
+        klave::notifier::send_string(&v.to_string().as_str());
         let https_request = Request::builder()
             .method("POST")
-            .uri(cmd)
+            .uri(&v.to_string())
             .header("Content-Type", "application/json")
             .body(String::from(""))
             .unwrap();
