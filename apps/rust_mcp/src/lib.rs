@@ -1,15 +1,25 @@
 #[allow(warnings)]
 mod bindings;
 
+// use std::result;
+
 use bindings::Guest;
 use serde_json::json;
 use serde_json::Value;
+
+use http::{
+    Request, // , Response
+             // , StatusCode
+};
+
 struct Component;
 
 impl Guest for Component {
     fn register_routes() {
         klave::router::add_user_query("load-from-ledger");
         klave::router::add_user_transaction("insert-in-ledger");
+
+        klave::router::add_user_query("cricket-scores");
     }
 
     fn load_from_ledger(cmd: String) {
@@ -53,6 +63,29 @@ impl Guest for Component {
         "value": value
         });
         klave::notifier::send_string(&result_as_json.to_string());
+    }
+
+    fn cricket_scores(cmd: String) {
+        let https_request = Request::builder()
+            .method("POST")
+            .uri(cmd)
+            .header("Content-Type", "application/json")
+            .body(String::from(""))
+            .unwrap();
+
+        let response = match klave::https::request(&https_request) {
+            Ok(r) => r,
+            Err(e) => {
+                klave::notifier::send_string(&format!(
+                    "https_query {} failure: {}",
+                    https_request.body(),
+                    e
+                ));
+                return;
+            }
+        };
+
+        klave::notifier::send_string(&response.body());
     }
 }
 
