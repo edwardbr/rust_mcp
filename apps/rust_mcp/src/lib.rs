@@ -67,6 +67,7 @@ impl Guest for Component {
 
     fn cricket_scores(cmd: String) {
         klave::notifier::send_string(&cmd);
+
         let Ok(v) = serde_json::from_str::<Value>(&cmd) else {
             klave::notifier::send_string(&format!("failed to parse '{cmd}' as json"));
             klave::router::cancel_transaction();
@@ -74,9 +75,10 @@ impl Guest for Component {
         };
 
         klave::notifier::send_string(&v.to_string().as_str());
-        let url = v["url"].as_str().unwrap();
 
+        let url = v["url"].as_str().unwrap();
         klave::notifier::send_string(&url);
+
         let https_request = Request::builder()
             .method("GET")
             .uri(url)
@@ -86,7 +88,7 @@ impl Guest for Component {
 
         klave::notifier::send_string("message sent");
 
-        let response = match klave::https::request(&https_request) {
+        let response: http::Response<String> = match klave::https::request(&https_request) {
             Ok(r) => r,
             Err(e) => {
                 klave::notifier::send_string(&format!(
@@ -98,7 +100,9 @@ impl Guest for Component {
             }
         };
 
-        klave::notifier::send_string(&response.body());
+        klave::notifier::send_string(&response.status().to_string());
+
+        klave::notifier::send_string(&format!("body {}", response.body()));
     }
 }
 
