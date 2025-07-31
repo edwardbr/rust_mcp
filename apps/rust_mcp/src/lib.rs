@@ -74,9 +74,12 @@ impl Guest for Component {
         };
 
         klave::notifier::send_string(&v.to_string().as_str());
+        let url = v["url"].as_str().unwrap();
+
+        klave::notifier::send_string(&url);
         let https_request = Request::builder()
             .method("POST")
-            .uri(&v.to_string())
+            .uri(url)
             .header("Content-Type", "application/json")
             .body(String::from(""))
             .unwrap();
