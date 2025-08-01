@@ -88,18 +88,15 @@ impl Guest for Component {
 
         klave::notifier::send_string(method);
 
-        let Some(body) = v["body"].as_str() else {
-            klave::notifier::send_string("failed to body' from json");
-            return;
-        };
+        let body = v["body"].to_string();
 
-        klave::notifier::send_string(body);
+        klave::notifier::send_string(&body);
 
         let Ok(https_request) = Request::builder()
             .method(method)
             .uri(url)
             .header("Content-Type", "application/json")
-            .body(body.to_string())
+            .body(body)
         else {
             klave::notifier::send_string("failed to send json");
             return;
