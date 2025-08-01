@@ -104,7 +104,6 @@ impl Guest for Component {
             klave::notifier::send_string("failed to send json");
             return;
         };
-        //testing 1,2,3
 
         let response: http::Response<String> = match klave::https::request(&https_request) {
             Ok(r) => r,
